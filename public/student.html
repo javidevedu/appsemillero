@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actividad - AppSemillero</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-seedling"></i> AppSemillero</h1>
+            <p>Actividad de aprendizaje</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="activity-container" class="activity-container">
+            <div id="activity-loading">
+                <p>Cargando actividad...</p>
+            </div>
+            
+            <div id="activity-content" class="hidden">
+                <!-- El contenido de la actividad se cargará aquí -->
+            </div>
+            
+            <div id="student-form" class="hidden">
+                <h3>Ingresa tu nombre para continuar:</h3>
+                <div class="form-group">
+                    <input type="text" id="student-name" placeholder="Tu nombre completo" required>
+                </div>
+                <button id="start-activity-btn" class="btn btn-primary">Comenzar actividad</button>
+            </div>
+            
+            <div id="activity-completed" class="hidden">
+                <h2>¡Actividad completada!</h2>
+                <p>Has obtenido <span id="score-value">0</span>% de calificación.</p>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Carta de Logro</h3>
+                    </div>
+                    <div class="card-image">
+                        <img id="skill-image" src="" alt="Habilidad">
+                    </div>
+                    <div class="card-content">
+                        <div class="card-title" id="card-title">Nombre de la actividad</div>
+                        <div class="card-info">
+                            <span>Estudiante: <strong id="card-student">Nombre del estudiante</strong></span>
+                            <span>Fecha: <strong id="card-date">01/01/2025</strong></span>
+                        </div>
+                        <div class="card-level" id="card-level">85%</div>
+                    </div>
+                </div>
+                
+                <button id="download-card-btn" class="btn btn-primary">Descargar carta</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 AppSemillero - Plataforma de aprendizaje gamificado</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+    <script src="js/student.js"></script>
+</body>
+</html>

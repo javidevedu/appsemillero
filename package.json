@@ -1,0 +1,23 @@
+{
+  "name": "appsemillero",
+  "version": "1.0.0",
+  "description": "Plataforma web de aprendizaje gamificado",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel deploy --prod"
+  },
+  "keywords": [
+    "educación",
+    "gamificación",
+    "aprendizaje"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "vercel": "^32.0.0"
+  }
+}

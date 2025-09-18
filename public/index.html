@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AppSemillero - Plataforma de Aprendizaje Gamificado</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-seedling"></i> AppSemillero</h1>
+            <p>Plataforma de aprendizaje gamificado para docentes</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Crea actividades interactivas para tus estudiantes</h2>
+                <p>Genera ejercicios de lectura, escritura, escucha y habla con recompensas gamificadas</p>
+                <button id="create-activity-btn" class="btn btn-primary">Crear Actividad</button>
+            </div>
+            <div class="hero-image">
+                <img src="img/hero-image.svg" alt="Aprendizaje gamificado">
+            </div>
+        </section>
+
+        <section id="activity-creator" class="hidden">
+            <h2>Crear Nueva Actividad</h2>
+            
+            <div class="form-group">
+                <label for="activity-name">Nombre de la actividad:</label>
+                <input type="text" id="activity-name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="activity-type">Tipo de actividad:</label>
+                <select id="activity-type" required>
+                    <option value="">Selecciona un tipo</option>
+                    <option value="reading">Quiz de selección múltiple (Reading)</option>
+                    <option value="writing">Completar espacios (Writing)</option>
+                    <option value="listening">Escucha y respuesta (Listening)</option>
+                    <option value="speaking">Contestar por voz (Speaking)</option>
+                </select>
+            </div>
+            
+            <div id="activity-form-container">
+                <!-- El formulario específico se cargará aquí según el tipo seleccionado -->
+            </div>
+            
+            <div class="form-actions">
+                <button id="save-activity-btn" class="btn btn-primary">Guardar Actividad</button>
+                <button id="cancel-activity-btn" class="btn btn-secondary">Cancelar</button>
+            </div>
+        </section>
+
+        <section id="activity-links" class="hidden">
+            <h2>¡Actividad creada con éxito!</h2>
+            <p>Comparte estos enlaces con tus estudiantes y guarda el enlace de administrador:</p>
+            
+            <div class="link-box">
+                <h3><i class="fas fa-users"></i> Enlace para estudiantes</h3>
+                <div class="link-container">
+                    <input type="text" id="student-link" readonly>
+                    <button class="copy-btn" data-target="student-link"><i class="fas fa-copy"></i></button>
+                </div>
+            </div>
+            
+            <div class="link-box">
+                <h3><i class="fas fa-user-shield"></i> Enlace de administrador</h3>
+                <div class="link-container">
+                    <input type="text" id="admin-link" readonly>
+                    <button class="copy-btn" data-target="admin-link"><i class="fas fa-copy"></i></button>
+                </div>
+                <p class="warning">¡Guarda este enlace! No podrás recuperarlo después.</p>
+            </div>
+            
+            <button id="create-new-activity-btn" class="btn btn-primary">Crear otra actividad</button>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 AppSemillero - Plataforma de aprendizaje gamificado</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/activity-creator.js"></script>
+</body>
+</html>

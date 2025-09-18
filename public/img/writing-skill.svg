@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#27ae60"/>
+      <stop offset="100%" stop-color="#1e8449"/>
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="95" fill="url(#bg)" stroke="#fff" stroke-width="2"/>
+  <g>
+    <!-- Pencil -->
+    <path d="M60,140 L120,80 L140,100 L80,160 L55,145 Z" fill="#f5f5f5"/>
+    <path d="M120,80 L140,100 L130,110 L110,90 Z" fill="#f39c12"/>
+    <path d="M55,145 L80,160 L60,140 Z" fill="#e74c3c"/>
+    <!-- Paper -->
+    <path d="M50,60 L130,60 L130,140 L50,140 Z" fill="#fff" stroke="#ccc" stroke-width="1"/>
+    <!-- Lines on paper -->
+    <path d="M60,80 L120,80" stroke="#3498db" stroke-width="2" stroke-linecap="round"/>
+    <path d="M60,100 L120,100" stroke="#3498db" stroke-width="2" stroke-linecap="round"/>
+    <path d="M60,120 L90,120" stroke="#3498db" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <text x="100" y="170" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#fff">WRITING</text>
+</svg>
