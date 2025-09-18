@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "name": "John Doe",
+        "role": "teacher",
+        "email": "john.doe@example.com",
+        "courses": []
+    },
+    {
+        "id": 2,
+        "name": "Jane Smith",
+        "role": "student",
+        "email": "jane.smith@example.com",
+        "courses": []
+    },
+    {
+        "id": 3,
+        "name": "Emily Johnson",
+        "role": "student",
+        "email": "emily.johnson@example.com",
+        "courses": []
+    }
+]

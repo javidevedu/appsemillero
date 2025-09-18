@@ -1,0 +1,39 @@
+{
+  "collectibleCards": [
+    {
+      "id": "1",
+      "name": "Star Student",
+      "description": "Awarded for completing 10 assignments.",
+      "image": "assets/images/star_student.png",
+      "points": 100
+    },
+    {
+      "id": "2",
+      "name": "Homework Hero",
+      "description": "Awarded for submitting all homework on time for a month.",
+      "image": "assets/images/homework_hero.png",
+      "points": 150
+    },
+    {
+      "id": "3",
+      "name": "Participation Pro",
+      "description": "Awarded for participating in all class discussions.",
+      "image": "assets/images/participation_pro.png",
+      "points": 50
+    }
+  ],
+  "rewards": [
+    {
+      "id": "1",
+      "name": "Extra Credit",
+      "description": "Earn extra credit points for your next assignment.",
+      "pointsRequired": 200
+    },
+    {
+      "id": "2",
+      "name": "Homework Pass",
+      "description": "Skip one homework assignment without penalty.",
+      "pointsRequired": 300
+    }
+  ]
+}

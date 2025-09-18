@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "title": "Math Homework",
+        "description": "Complete the exercises on page 42.",
+        "dueDate": "2023-10-15",
+        "link": "https://example.com/assignments/1",
+        "createdBy": "teacher1"
+    },
+    {
+        "id": 2,
+        "title": "Science Project",
+        "description": "Prepare a presentation on renewable energy sources.",
+        "dueDate": "2023-10-22",
+        "link": "https://example.com/assignments/2",
+        "createdBy": "teacher2"
+    },
+    {
+        "id": 3,
+        "title": "History Essay",
+        "description": "Write a 1000-word essay on World War II.",
+        "dueDate": "2023-10-29",
+        "link": "https://example.com/assignments/3",
+        "createdBy": "teacher1"
+    }
+]

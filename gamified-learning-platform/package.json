@@ -1,0 +1,25 @@
+{
+  "name": "gamified-learning-platform",
+  "version": "1.0.0",
+  "description": "A gamified learning platform for teachers and students.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/backend/api/index.js",
+    "dev": "nodemon src/backend/api/index.js",
+    "build": "echo 'Build step not defined'",
+    "test": "echo 'No tests defined'"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.7"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "gamification",
+    "learning",
+    "education",
+    "platform"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}

@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/backend/api/**/*.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "public/index.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/users",
+      "dest": "src/backend/api/users.js"
+    },
+    {
+      "src": "/api/courses",
+      "dest": "src/backend/api/courses.js"
+    },
+    {
+      "src": "/api/assignments",
+      "dest": "src/backend/api/assignments.js"
+    },
+    {
+      "src": "/api/gamification",
+      "dest": "src/backend/api/gamification.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "public/index.html"
+    }
+  ]
+}
