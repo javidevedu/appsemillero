@@ -47,8 +47,8 @@ module.exports = async (req, res) => {
       ? `https://${process.env.VERCEL_URL}` 
       : 'http://localhost:3000';
     
-    const studentLink = `${baseUrl}/student/${studentId}`;
-    const adminLink = `${baseUrl}/admin/${adminId}`;
+    const studentLink = `${baseUrl}/student.html?id=${studentId}`;
+    const adminLink = `${baseUrl}/admin.html?id=${adminId}`;
 
     // Devolver los enlaces generados
     return res.status(200).json({
