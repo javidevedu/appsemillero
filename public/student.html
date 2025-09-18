@@ -3,69 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Actividad - AppSemillero</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Actividad de Aprendizaje - EduGamify</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1><i class="fas fa-seedling"></i> AppSemillero</h1>
-            <p>Actividad de aprendizaje</p>
-        </div>
-    </header>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">🎓 EduGamify</h1>
+                <p class="subtitle">Actividad de Aprendizaje</p>
+            </div>
+        </header>
 
-    <main class="container">
-        <section id="activity-container" class="activity-container">
-            <div id="activity-loading">
+        <main class="main-content">
+            <div id="loadingSection" class="loading-section">
+                <div class="loading-spinner"></div>
                 <p>Cargando actividad...</p>
             </div>
-            
-            <div id="activity-content" class="hidden">
-                <!-- El contenido de la actividad se cargará aquí -->
-            </div>
-            
-            <div id="student-form" class="hidden">
-                <h3>Ingresa tu nombre para continuar:</h3>
-                <div class="form-group">
-                    <input type="text" id="student-name" placeholder="Tu nombre completo" required>
+
+            <div id="errorSection" class="error-section" style="display: none;">
+                <div class="error-card">
+                    <h3>❌ Error</h3>
+                    <p id="errorMessage">No se pudo cargar la actividad.</p>
+                    <button onclick="window.location.href='/'">Volver al Inicio</button>
                 </div>
-                <button id="start-activity-btn" class="btn btn-primary">Comenzar actividad</button>
             </div>
-            
-            <div id="activity-completed" class="hidden">
-                <h2>¡Actividad completada!</h2>
-                <p>Has obtenido <span id="score-value">0</span>% de calificación.</p>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Carta de Logro</h3>
+
+            <div id="activitySection" class="activity-section" style="display: none;">
+                <div class="activity-header">
+                    <h2 id="activityTitle"></h2>
+                    <p id="activityDescription"></p>
+                    <div class="skill-badge" id="skillBadge"></div>
+                </div>
+
+                <form id="activityForm" class="activity-form">
+                    <div id="activityContent">
+                        <!-- El contenido se genera dinámicamente según el tipo de actividad -->
                     </div>
-                    <div class="card-image">
-                        <img id="skill-image" src="" alt="Habilidad">
+
+                    <div class="student-info">
+                        <label for="studentName">Tu Nombre *</label>
+                        <input type="text" id="studentName" name="studentName" required placeholder="Ingresa tu nombre completo">
                     </div>
-                    <div class="card-content">
-                        <div class="card-title" id="card-title">Nombre de la actividad</div>
-                        <div class="card-info">
-                            <span>Estudiante: <strong id="card-student">Nombre del estudiante</strong></span>
-                            <span>Fecha: <strong id="card-date">01/01/2025</strong></span>
+
+                    <button type="submit" class="submit-btn">
+                        <span class="btn-text">Enviar Respuestas</span>
+                        <span class="btn-loading" style="display: none;">Enviando...</span>
+                    </button>
+                </form>
+            </div>
+
+            <div id="successSection" class="success-section" style="display: none;">
+                <div class="success-card">
+                    <h3>🎉 ¡Excelente Trabajo!</h3>
+                    <p id="successMessage"></p>
+                    
+                    <div id="collectibleCard" class="collectible-card">
+                        <div class="card-header">
+                            <div class="card-icon" id="cardIcon"></div>
+                            <div class="card-title">
+                                <h4 id="cardSkillName"></h4>
+                                <p id="cardActivityTitle"></p>
+                            </div>
                         </div>
-                        <div class="card-level" id="card-level">85%</div>
+                        <div class="card-body">
+                            <div class="student-info">
+                                <strong>Estudiante:</strong> <span id="cardStudentName"></span>
+                            </div>
+                            <div class="score-info">
+                                <strong>Puntuación:</strong> <span id="cardScore"></span>
+                            </div>
+                            <div class="performance-level">
+                                <span id="cardPerformanceLevel"></span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button onclick="downloadCard()" class="download-btn">📥 Descargar Carta</button>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button onclick="window.location.href='/'">Volver al Inicio</button>
                     </div>
                 </div>
-                
-                <button id="download-card-btn" class="btn btn-primary">Descargar carta</button>
             </div>
-        </section>
-    </main>
+        </main>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 AppSemillero - Plataforma de aprendizaje gamificado</p>
-        </div>
-    </footer>
+        <footer class="footer">
+            <p>&copy; 2024 EduGamify - Plataforma de Aprendizaje Gamificado</p>
+        </footer>
+    </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
-    <script src="js/student.js"></script>
+    <script src="student-script.js"></script>
 </body>
 </html>

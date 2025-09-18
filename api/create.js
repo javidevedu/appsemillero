@@ -1,64 +1,135 @@
-// Endpoint para crear actividades y generar links
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
 const path = require('path');
-const { getDataFilePath, ensureDataDirExists } = require('./utils/dataStore');
 
-module.exports = async (req, res) => {
-  // Solo permitir método POST
+// Base de datos en memoria (archivos JSON)
+const DB_PATH = path.join(__dirname, '..', 'data');
+const ACTIVITIES_FILE = path.join(DB_PATH, 'activities.json');
+
+// Crear directorio de datos si no existe
+if (!fs.existsSync(DB_PATH)) {
+  fs.mkdirSync(DB_PATH, { recursive: true });
+}
+
+// Inicializar archivo de actividades si no existe
+if (!fs.existsSync(ACTIVITIES_FILE)) {
+  fs.writeFileSync(ACTIVITIES_FILE, JSON.stringify([]));
+}
+
+function loadActivities() {
+  try {
+    const data = fs.readFileSync(ACTIVITIES_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveActivities(activities) {
+  fs.writeFileSync(ACTIVITIES_FILE, JSON.stringify(activities, null, 2));
+}
+
+export default function handler(req, res) {
+  // Configurar CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Método no permitido' });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    // Obtener datos de la actividad del cuerpo de la solicitud
-    const activityData = req.body;
+    const { title, description, type, content, skill } = req.body;
 
-    // Validar datos mínimos requeridos
-    if (!activityData.name || !activityData.type) {
-      return res.status(400).json({ error: 'Nombre y tipo de actividad son requeridos' });
+    // Validar datos requeridos
+    if (!title || !type || !content) {
+      return res.status(400).json({ 
+        error: 'Missing required fields: title, type, and content are required' 
+      });
     }
 
-    // Generar IDs únicos para los enlaces
-    const studentId = uuidv4();
-    const adminId = uuidv4();
+    // Validar tipo de actividad
+    const validTypes = ['quiz', 'fill-blanks', 'listening', 'speaking'];
+    if (!validTypes.includes(type)) {
+      return res.status(400).json({ 
+        error: 'Invalid activity type. Must be one of: quiz, fill-blanks, listening, speaking' 
+      });
+    }
 
-    // Crear objeto de actividad completo
+    // Validar contenido según el tipo
+    if (type === 'quiz' && (!content.questions || !Array.isArray(content.questions))) {
+      return res.status(400).json({ 
+        error: 'Quiz activities must include questions array' 
+      });
+    }
+
+    if (type === 'fill-blanks' && (!content.text || !content.blanks || !Array.isArray(content.blanks))) {
+      return res.status(400).json({ 
+        error: 'Fill-blanks activities must include text and blanks array' 
+      });
+    }
+
+    if (type === 'listening' && (!content.audioUrl || !content.questions || !Array.isArray(content.questions))) {
+      return res.status(400).json({ 
+        error: 'Listening activities must include audioUrl and questions array' 
+      });
+    }
+
+    if (type === 'speaking' && (!content.mediaUrl || !content.instructions)) {
+      return res.status(400).json({ 
+        error: 'Speaking activities must include mediaUrl and instructions' 
+      });
+    }
+
+    // Generar UUIDs únicos
+    const studentLink = uuidv4();
+    const adminLink = uuidv4();
+
+    // Crear objeto de actividad
     const activity = {
       id: uuidv4(),
-      name: activityData.name,
-      type: activityData.type,
-      studentId,
-      adminId,
+      title,
+      description: description || '',
+      type,
+      skill: skill || 'general',
+      content,
+      studentLink,
+      adminLink,
       createdAt: new Date().toISOString(),
-      content: activityData,
       submissions: []
     };
 
-    // Asegurar que el directorio de datos existe
-    ensureDataDirExists();
+    // Guardar en la base de datos
+    const activities = loadActivities();
+    activities.push(activity);
+    saveActivities(activities);
 
-    // Guardar la actividad en un archivo JSON
-    const filePath = getDataFilePath(`activity_${activity.id}.json`);
-    fs.writeFileSync(filePath, JSON.stringify(activity, null, 2));
-
-    // Generar URLs para estudiantes y administrador
-    const baseUrl = process.env.VERCEL_URL 
-      ? `https://${process.env.VERCEL_URL}` 
-      : 'http://localhost:3000';
-    
-    const studentLink = `${baseUrl}/student.html?id=${studentId}`;
-    const adminLink = `${baseUrl}/admin.html?id=${adminId}`;
-
-    // Devolver los enlaces generados
-    return res.status(200).json({
+    // Respuesta exitosa
+    res.status(201).json({
       success: true,
-      activityId: activity.id,
-      studentLink,
-      adminLink
+      activity: {
+        id: activity.id,
+        title: activity.title,
+        type: activity.type,
+        skill: activity.skill
+      },
+      links: {
+        student: `${req.headers.origin || 'http://localhost:3000'}/student/${studentLink}`,
+        admin: `${req.headers.origin || 'http://localhost:3000'}/admin/${adminLink}`
+      }
     });
+
   } catch (error) {
-    console.error('Error al crear actividad:', error);
-    return res.status(500).json({ error: 'Error interno del servidor' });
+    console.error('Error creating activity:', error);
+    res.status(500).json({ 
+      error: 'Internal server error',
+      details: error.message 
+    });
   }
-};
+}

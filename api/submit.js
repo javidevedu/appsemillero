@@ -1,116 +1,217 @@
-// Endpoint para guardar respuestas de estudiantes
-const { v4: uuidv4 } = require('uuid');
-const { getActivityByStudentId, saveSubmission } = require('./utils/dataStore');
+const fs = require('fs');
+const path = require('path');
 
-module.exports = async (req, res) => {
-  // Solo permitir método POST
+// Base de datos en memoria (archivos JSON)
+const DB_PATH = path.join(__dirname, '..', 'data');
+const ACTIVITIES_FILE = path.join(DB_PATH, 'activities.json');
+const SUBMISSIONS_FILE = path.join(DB_PATH, 'submissions.json');
+
+// Crear directorio de datos si no existe
+if (!fs.existsSync(DB_PATH)) {
+  fs.mkdirSync(DB_PATH, { recursive: true });
+}
+
+// Inicializar archivos si no existen
+if (!fs.existsSync(ACTIVITIES_FILE)) {
+  fs.writeFileSync(ACTIVITIES_FILE, JSON.stringify([]));
+}
+
+if (!fs.existsSync(SUBMISSIONS_FILE)) {
+  fs.writeFileSync(SUBMISSIONS_FILE, JSON.stringify([]));
+}
+
+function loadActivities() {
+  try {
+    const data = fs.readFileSync(ACTIVITIES_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveActivities(activities) {
+  fs.writeFileSync(ACTIVITIES_FILE, JSON.stringify(activities, null, 2));
+}
+
+function loadSubmissions() {
+  try {
+    const data = fs.readFileSync(SUBMISSIONS_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveSubmissions(submissions) {
+  fs.writeFileSync(SUBMISSIONS_FILE, JSON.stringify(submissions, null, 2));
+}
+
+function calculateScore(activity, answers) {
+  const { type, content } = activity;
+  
+  switch (type) {
+    case 'quiz':
+      return calculateQuizScore(content.questions, answers.questions || []);
+    
+    case 'fill-blanks':
+      return calculateFillBlanksScore(content.blanks, answers.blanks || []);
+    
+    case 'listening':
+      return calculateQuizScore(content.questions, answers.questions || []);
+    
+    case 'speaking':
+      // Speaking requiere revisión manual, retornamos null
+      return null;
+    
+    default:
+      return 0;
+  }
+}
+
+function calculateQuizScore(questions, answers) {
+  if (!questions || !answers || questions.length !== answers.length) {
+    return 0;
+  }
+  
+  let correct = 0;
+  questions.forEach((question, index) => {
+    if (answers[index] === question.correctAnswer) {
+      correct++;
+    }
+  });
+  
+  return Math.round((correct / questions.length) * 100);
+}
+
+function calculateFillBlanksScore(blanks, answers) {
+  if (!blanks || !answers || blanks.length !== answers.length) {
+    return 0;
+  }
+  
+  let correct = 0;
+  blanks.forEach((blank, index) => {
+    if (answers[index] && answers[index].toLowerCase().trim() === blank.correctAnswer.toLowerCase().trim()) {
+      correct++;
+    }
+  });
+  
+  return Math.round((correct / blanks.length) * 100);
+}
+
+function generateCollectibleCard(studentName, activity, score) {
+  const skillIcons = {
+    'reading': '📚',
+    'writing': '✍️',
+    'listening': '👂',
+    'speaking': '🗣️',
+    'general': '🎯'
+  };
+
+  const skillNames = {
+    'reading': 'Reading Master',
+    'writing': 'Writing Wizard',
+    'listening': 'Listening Champion',
+    'speaking': 'Speaking Star',
+    'general': 'Learning Hero'
+  };
+
+  const performanceLevel = score >= 90 ? 'Excellent' : 
+                          score >= 80 ? 'Great' : 
+                          score >= 70 ? 'Good' : 
+                          score >= 60 ? 'Fair' : 'Needs Practice';
+
+  return {
+    id: `card_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    studentName,
+    activityTitle: activity.title,
+    skill: activity.skill,
+    skillIcon: skillIcons[activity.skill] || skillIcons.general,
+    skillName: skillNames[activity.skill] || skillNames.general,
+    score: score || 'Pending Review',
+    performanceLevel,
+    completedAt: new Date().toISOString(),
+    downloadUrl: null // Se generará cuando se solicite la descarga
+  };
+}
+
+export default function handler(req, res) {
+  // Configurar CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Método no permitido' });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { studentId, studentName, answers } = req.body;
+    const { studentLink, studentName, answers, audioFile } = req.body;
 
-    // Validar datos requeridos
-    if (!studentId || !studentName || !answers) {
-      return res.status(400).json({ error: 'Faltan datos requeridos' });
+    if (!studentLink || !studentName) {
+      return res.status(400).json({ 
+        error: 'Missing required fields: studentLink and studentName are required' 
+      });
     }
 
-    // Obtener la actividad por el ID de estudiante
-    const activity = getActivityByStudentId(studentId);
+    // Buscar la actividad por studentLink
+    const activities = loadActivities();
+    const activity = activities.find(a => a.studentLink === studentLink);
+
     if (!activity) {
-      return res.status(404).json({ error: 'Actividad no encontrada' });
+      return res.status(404).json({ error: 'Activity not found' });
     }
 
-    // Calcular calificación según el tipo de actividad
-    let score = 0;
-    let maxScore = 0;
-    let needsManualReview = false;
+    // Calcular puntuación
+    const score = calculateScore(activity, answers);
 
-    switch (activity.type) {
-      case 'reading':
-        // Para quizzes de selección múltiple
-        const questions = activity.content.questions;
-        maxScore = questions.length;
-        
-        questions.forEach((question, index) => {
-          if (answers[index] === question.correctOption) {
-            score++;
-          }
-        });
-        break;
-        
-      case 'writing':
-        // Para ejercicios de completar espacios
-        const blanks = activity.content.blanks;
-        maxScore = blanks.length;
-        
-        blanks.forEach((blank, index) => {
-          if (answers[index].toLowerCase() === blank.toLowerCase()) {
-            score++;
-          }
-        });
-        break;
-        
-      case 'listening':
-        // Para actividades de escucha y respuesta
-        const listeningQuestions = activity.content.questions;
-        maxScore = listeningQuestions.length;
-        
-        listeningQuestions.forEach((question, index) => {
-          if (answers[index] === question.correctOption) {
-            score++;
-          }
-        });
-        break;
-        
-      case 'speaking':
-        // Para ejercicios de contestar por voz
-        needsManualReview = true;
-        maxScore = 100; // La calificación será asignada manualmente
-        score = 0;
-        break;
-        
-      default:
-        return res.status(400).json({ error: 'Tipo de actividad no válido' });
-    }
-
-    // Calcular porcentaje de calificación
-    const percentage = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
-
-    // Crear objeto de respuesta
+    // Crear submission
     const submission = {
-      id: uuidv4(),
+      id: `sub_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      activityId: activity.id,
       studentName,
-      submittedAt: new Date().toISOString(),
       answers,
+      audioFile: audioFile || null,
       score,
-      maxScore,
-      percentage,
-      needsManualReview
+      submittedAt: new Date().toISOString(),
+      status: score !== null ? 'graded' : 'pending_review'
     };
 
-    // Guardar la respuesta
-    saveSubmission(activity.id, submission);
+    // Guardar submission
+    const submissions = loadSubmissions();
+    submissions.push(submission);
+    saveSubmissions(submissions);
 
-    // Generar datos para la carta coleccionable
-    const cardData = {
-      studentName,
-      activityName: activity.name,
-      skillType: activity.type,
-      percentage,
-      submissionId: submission.id,
-      date: new Date().toLocaleDateString()
-    };
+    // Actualizar actividad con la submission
+    activity.submissions.push(submission.id);
+    saveActivities(activities);
 
-    // Devolver respuesta exitosa con datos de la carta
-    return res.status(200).json({
+    // Generar carta coleccionable
+    const collectibleCard = generateCollectibleCard(studentName, activity, score);
+
+    // Respuesta exitosa
+    res.status(201).json({
       success: true,
-      submission,
-      cardData
+      submission: {
+        id: submission.id,
+        score: submission.score,
+        status: submission.status
+      },
+      collectibleCard,
+      message: score !== null 
+        ? `¡Excelente trabajo! Obtuviste ${score}% de aciertos.`
+        : 'Tu respuesta ha sido enviada para revisión manual.'
     });
+
   } catch (error) {
-    console.error('Error al guardar respuesta:', error);
-    return res.status(500).json({ error: 'Error interno del servidor' });
+    console.error('Error submitting activity:', error);
+    res.status(500).json({ 
+      error: 'Internal server error',
+      details: error.message 
+    });
   }
-};
+}

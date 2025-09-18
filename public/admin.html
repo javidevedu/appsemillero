@@ -3,99 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administrador - Plataforma de Aprendizaje</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Panel de Administración - EduGamify</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <header class="admin-header">
-            <h1>Panel de Administrador</h1>
-            <p class="activity-name" id="activity-name">Cargando actividad...</p>
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">🎓 EduGamify</h1>
+                <p class="subtitle">Panel de Administración</p>
+            </div>
         </header>
 
-        <main class="admin-content">
-            <div id="loading-results" class="loading-container">
+        <main class="main-content">
+            <div id="loadingSection" class="loading-section">
+                <div class="loading-spinner"></div>
                 <p>Cargando resultados...</p>
-                <div class="spinner"></div>
             </div>
 
-            <div id="results-container" class="results-container hidden">
-                <div class="results-header">
-                    <h2>Resultados de los estudiantes</h2>
-                    <button id="export-btn" class="btn btn-secondary">
-                        <i class="fas fa-download"></i> Exportar a CSV
-                    </button>
+            <div id="errorSection" class="error-section" style="display: none;">
+                <div class="error-card">
+                    <h3>❌ Error</h3>
+                    <p id="errorMessage">No se pudieron cargar los resultados.</p>
+                    <button onclick="window.location.href='/'">Volver al Inicio</button>
+                </div>
+            </div>
+
+            <div id="resultsSection" class="results-section" style="display: none;">
+                <div class="activity-info">
+                    <h2 id="activityTitle"></h2>
+                    <p id="activityDescription"></p>
+                    <div class="activity-meta">
+                        <span class="skill-badge" id="skillBadge"></span>
+                        <span class="activity-type" id="activityType"></span>
+                        <span class="created-date" id="createdDate"></span>
+                    </div>
+                </div>
+
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalSubmissions">0</div>
+                        <div class="stat-label">Total Envíos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="gradedSubmissions">0</div>
+                        <div class="stat-label">Calificados</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="pendingReview">0</div>
+                        <div class="stat-label">Pendientes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="averageScore">0%</div>
+                        <div class="stat-label">Promedio</div>
+                    </div>
+                </div>
+
+                <div class="results-actions">
+                    <button onclick="exportToCSV()" class="export-btn">📊 Exportar CSV</button>
+                    <button onclick="refreshResults()" class="refresh-btn">🔄 Actualizar</button>
                 </div>
 
                 <div class="results-table-container">
-                    <table id="results-table" class="results-table">
+                    <table class="results-table">
                         <thead>
                             <tr>
-                                <th>Nombre</th>
-                                <th>Calificación</th>
-                                <th>Fecha</th>
-                                <th>Carta</th>
+                                <th>Estudiante</th>
+                                <th>Puntuación</th>
+                                <th>Estado</th>
+                                <th>Fecha de Envío</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="results-body">
-                            <!-- Los resultados se cargarán dinámicamente -->
+                        <tbody id="resultsTableBody">
+                            <!-- Los resultados se cargan dinámicamente -->
                         </tbody>
                     </table>
                 </div>
 
-                <div id="no-results" class="no-results hidden">
-                    <p>Aún no hay resultados para esta actividad.</p>
-                </div>
-            </div>
-
-            <div id="submission-details" class="submission-details hidden">
-                <div class="details-header">
-                    <button id="back-to-results" class="btn btn-text">
-                        <i class="fas fa-arrow-left"></i> Volver a resultados
-                    </button>
-                    <h2>Detalles de la respuesta</h2>
-                </div>
-
-                <div class="student-info">
-                    <h3 id="detail-student-name">Nombre del estudiante</h3>
-                    <p id="detail-submission-date">Fecha: --/--/----</p>
-                    <p id="detail-score">Calificación: --</p>
-                </div>
-
-                <div id="detail-content" class="detail-content">
-                    <!-- El contenido detallado se cargará dinámicamente -->
-                </div>
-
-                <div class="card-preview">
-                    <h3>Vista previa de la carta</h3>
-                    <div id="card-container" class="card">
-                        <div class="card-header">
-                            <h4 id="card-title">Título de la actividad</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="card-image">
-                                <img id="skill-image" src="" alt="Habilidad">
-                            </div>
-                            <div class="card-info">
-                                <p><strong>Estudiante:</strong> <span id="card-student">Nombre del estudiante</span></p>
-                                <p><strong>Fecha:</strong> <span id="card-date">01/01/2023</span></p>
-                                <p><strong>Nivel:</strong> <span id="card-level">100%</span></p>
-                            </div>
-                        </div>
-                    </div>
+                <div id="noResultsMessage" class="no-results" style="display: none;">
+                    <p>📝 Aún no hay envíos para esta actividad.</p>
+                    <p>Comparte el enlace de estudiantes para comenzar a recibir respuestas.</p>
                 </div>
             </div>
         </main>
 
-        <footer>
-            <p>&copy; 2023 Plataforma de Aprendizaje Gamificado</p>
+        <footer class="footer">
+            <p>&copy; 2024 EduGamify - Plataforma de Aprendizaje Gamificado</p>
         </footer>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
-    <script src="js/admin.js"></script>
+    <!-- Modal para ver detalles de la carta -->
+    <div id="cardModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Carta Coleccionable</h3>
+                <button onclick="closeCardModal()" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body" id="cardModalBody">
+                <!-- El contenido de la carta se carga aquí -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para escuchar audio -->
+    <div id="audioModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Audio del Estudiante</h3>
+                <button onclick="closeAudioModal()" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <audio id="audioPlayer" controls style="width: 100%;">
+                    Tu navegador no soporta el elemento de audio.
+                </audio>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-script.js"></script>
 </body>
 </html>

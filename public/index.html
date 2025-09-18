@@ -3,91 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AppSemillero - Plataforma de Aprendizaje Gamificado</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Plataforma de Aprendizaje Gamificado</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1><i class="fas fa-seedling"></i> AppSemillero</h1>
-            <p>Plataforma de aprendizaje gamificado para docentes</p>
-        </div>
-    </header>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">🎓 EduGamify</h1>
+                <p class="subtitle">Plataforma de Aprendizaje Gamificado</p>
+            </div>
+        </header>
 
-    <main class="container">
-        <section class="hero">
-            <div class="hero-content">
-                <h2>Crea actividades interactivas para tus estudiantes</h2>
-                <p>Genera ejercicios de lectura, escritura, escucha y habla con recompensas gamificadas</p>
-                <button id="create-activity-btn" class="btn btn-primary">Crear Actividad</button>
-            </div>
-            <div class="hero-image">
-                <img src="img/hero-image.svg" alt="Aprendizaje gamificado">
-            </div>
-        </section>
+        <main class="main-content">
+            <section class="hero">
+                <h2>¡Crea actividades de aprendizaje interactivas!</h2>
+                <p>Diseña ejercicios gamificados para tus estudiantes y genera recompensas coleccionables automáticamente.</p>
+            </section>
 
-        <section id="activity-creator" class="hidden">
-            <h2>Crear Nueva Actividad</h2>
-            
-            <div class="form-group">
-                <label for="activity-name">Nombre de la actividad:</label>
-                <input type="text" id="activity-name" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="activity-type">Tipo de actividad:</label>
-                <select id="activity-type" required>
-                    <option value="">Selecciona un tipo</option>
-                    <option value="reading">Quiz de selección múltiple (Reading)</option>
-                    <option value="writing">Completar espacios (Writing)</option>
-                    <option value="listening">Escucha y respuesta (Listening)</option>
-                    <option value="speaking">Contestar por voz (Speaking)</option>
-                </select>
-            </div>
-            
-            <div id="activity-form-container">
-                <!-- El formulario específico se cargará aquí según el tipo seleccionado -->
-            </div>
-            
-            <div class="form-actions">
-                <button id="save-activity-btn" class="btn btn-primary">Guardar Actividad</button>
-                <button id="cancel-activity-btn" class="btn btn-secondary">Cancelar</button>
-            </div>
-        </section>
+            <section class="activity-creation">
+                <div class="form-container">
+                    <h3>Crear Nueva Actividad</h3>
+                    <form id="activityForm" class="activity-form">
+                        <div class="form-group">
+                            <label for="title">Título de la Actividad *</label>
+                            <input type="text" id="title" name="title" required placeholder="Ej: Quiz de Verbos Irregulares">
+                        </div>
 
-        <section id="activity-links" class="hidden">
-            <h2>¡Actividad creada con éxito!</h2>
-            <p>Comparte estos enlaces con tus estudiantes y guarda el enlace de administrador:</p>
-            
-            <div class="link-box">
-                <h3><i class="fas fa-users"></i> Enlace para estudiantes</h3>
-                <div class="link-container">
-                    <input type="text" id="student-link" readonly>
-                    <button class="copy-btn" data-target="student-link"><i class="fas fa-copy"></i></button>
+                        <div class="form-group">
+                            <label for="description">Descripción</label>
+                            <textarea id="description" name="description" placeholder="Describe brevemente la actividad..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="skill">Habilidad a Desarrollar *</label>
+                            <select id="skill" name="skill" required>
+                                <option value="">Selecciona una habilidad</option>
+                                <option value="reading">📚 Reading (Lectura)</option>
+                                <option value="writing">✍️ Writing (Escritura)</option>
+                                <option value="listening">👂 Listening (Escucha)</option>
+                                <option value="speaking">🗣️ Speaking (Habla)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="type">Tipo de Actividad *</label>
+                            <select id="type" name="type" required>
+                                <option value="">Selecciona el tipo</option>
+                                <option value="quiz">Quiz de Selección Múltiple</option>
+                                <option value="fill-blanks">Completar Espacios en Blanco</option>
+                                <option value="listening">Escucha y Responde</option>
+                                <option value="speaking">Respuesta por Voz</option>
+                            </select>
+                        </div>
+
+                        <div id="contentSection" class="content-section" style="display: none;">
+                            <!-- El contenido se genera dinámicamente según el tipo -->
+                        </div>
+
+                        <button type="submit" class="create-btn" disabled>
+                            <span class="btn-text">Crear Actividad</span>
+                            <span class="btn-loading" style="display: none;">Creando...</span>
+                        </button>
+                    </form>
                 </div>
-            </div>
-            
-            <div class="link-box">
-                <h3><i class="fas fa-user-shield"></i> Enlace de administrador</h3>
-                <div class="link-container">
-                    <input type="text" id="admin-link" readonly>
-                    <button class="copy-btn" data-target="admin-link"><i class="fas fa-copy"></i></button>
+            </section>
+
+            <section id="resultsSection" class="results-section" style="display: none;">
+                <div class="results-container">
+                    <h3>¡Actividad Creada Exitosamente!</h3>
+                    <div class="links-container">
+                        <div class="link-card">
+                            <h4>🔗 Link para Estudiantes</h4>
+                            <p>Comparte este enlace con tus estudiantes para que resuelvan la actividad:</p>
+                            <div class="link-input-group">
+                                <input type="text" id="studentLink" readonly>
+                                <button onclick="copyToClipboard('studentLink')" class="copy-btn">Copiar</button>
+                            </div>
+                        </div>
+                        
+                        <div class="link-card">
+                            <h4>👨‍🏫 Link para Docente</h4>
+                            <p>Usa este enlace para ver resultados y calificaciones:</p>
+                            <div class="link-input-group">
+                                <input type="text" id="adminLink" readonly>
+                                <button onclick="copyToClipboard('adminLink')" class="copy-btn">Copiar</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button onclick="openStudentLink()" class="action-btn primary">Ver como Estudiante</button>
+                        <button onclick="openAdminLink()" class="action-btn secondary">Ver Resultados</button>
+                        <button onclick="createNewActivity()" class="action-btn outline">Crear Otra Actividad</button>
+                    </div>
                 </div>
-                <p class="warning">¡Guarda este enlace! No podrás recuperarlo después.</p>
-            </div>
-            
-            <button id="create-new-activity-btn" class="btn btn-primary">Crear otra actividad</button>
-        </section>
-    </main>
+            </section>
+        </main>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 AppSemillero - Plataforma de aprendizaje gamificado</p>
-        </div>
-    </footer>
+        <footer class="footer">
+            <p>&copy; 2024 EduGamify - Plataforma de Aprendizaje Gamificado</p>
+        </footer>
+    </div>
 
-    <script src="js/main.js"></script>
-    <script src="js/activity-creator.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
