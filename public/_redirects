@@ -1,9 +1,0 @@
-# Redirects para SPA (Single Page Application)
-# Redirigir todas las rutas de estudiantes a student.html
-/student/* /student.html 200
-
-# Redirigir todas las rutas de administrador a admin.html
-/admin/* /admin.html 200
-
-# Redirigir la raíz a index.html
-/ /index.html 200
